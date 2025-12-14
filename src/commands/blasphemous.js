@@ -1,17 +1,47 @@
+#!/usr/bin/env node
 
-// This is the main file
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { opt, dir, readJson } from './lib.js';
+import mergebase from './mergebase.js';
+import permalink from './permalink.js';
+import pagerizer from './pagerizer.js';
+import homepages from './homepages.js';
 
-// make it readable
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const root = join(__dirname, '../..');
 
-src = samples/sources/my-blog (there is also a company blog, but that would require running blasphemous for that path specifically that is a differet world) these blogs have category/chapter and then just post (privatly in my mind I call the category BOOK, maybe you can use that too, I want my blog to present multiple books, book on philosophy, on tenchonlogy on fitness.)
-dest = samples/destinations
+const options = opt({
+  src: join(root, 'samples/sources/my-blog'),
+  dest: join(root, 'samples/destinations'),
+});
 
-for(const destination of await destinations(dest)) {
-  const opt = ... remember to read samples/destinations/.../options.json as those contain command data
+const { src, dest } = options;
 
-  await mergebase({src, dest, ...opt.mergebase}) // static files / assets
-  await permalink({src, dest, ...opt.permalink}) // create wwwroot/permalinks see samples/destinations/nekoweb-account-main/wwwroot/permalink/f5953c99-919a-4448-8c71-41386b8e8441 for example
-  await pagerizer({src, dest, ...opt.pagerizer}) // create page-001.html ... WARNING no index.html that is a special feature
-  await homepages({}) // generate index.html(s) higlilting most recent posts with specific tags such as app (contained app) music, has some extra mp3 in files
+// Discover all destination folders (exclude 'static' folder - it's for global assets)
+const allDirs = await dir(dest);
+const destinations = allDirs.filter(d => !d.endsWith('/static'));
 
+// Build each destination
+for (const destination of destinations) {
+  const destName = destination.split('/').pop();
+  console.log(`\n📦 Building: ${destName}`);
+
+  const destOptions = await readJson(join(destination, 'options.json')).catch(() => ({}));
+
+  console.log('  📁 Merging static assets...');
+  await mergebase({ src, dest: destination, ...destOptions.mergebase });
+
+  console.log('  🔗 Creating permalinks...');
+  const posts = await permalink({ src, dest: destination, ...destOptions.permalink });
+
+  console.log('  📄 Generating pages...');
+  await pagerizer({ src, dest: destination, ...destOptions.pagerizer });
+
+  console.log('  🏠 Building homepage...');
+  await homepages({ src, dest: destination, ...destOptions.homepages });
+
+  console.log(`  ✓ Built ${posts.length} posts`);
 }
+
+console.log('\n✨ All destinations built successfully\n');

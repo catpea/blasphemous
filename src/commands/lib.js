@@ -20,3 +20,32 @@ export const camelToKebab = s => s.replace(/[A-Z]/g, m => '-' + m.toLowerCase())
 
 // image processing
 export const fitToKBounds = (w, h, K=1) => (w>1024*K||h>1024*K) ? (w>h ? [1024*K, parseInt(1024*K/(w/h))] : [parseInt(1024*K*(w/h)), 1024*K]) : [w,h]; // resize image to fit 1K
+
+// Discover all posts in source database
+export const discoverPosts = async (dbPath) => {
+  const posts = [];
+  const categories = await dir(dbPath);
+
+  for (const category of categories) {
+    const chapters = await dir(category);
+
+    for (const chapter of chapters) {
+      const postDirs = await dir(chapter);
+
+      for (const postDir of postDirs) {
+        const optionsPath = path.join(postDir, 'options.json');
+        const options = await readJson(optionsPath);
+
+        posts.push({
+          path: postDir,
+          category: path.basename(category),
+          chapter: path.basename(chapter),
+          postId: path.basename(postDir),
+          ...options
+        });
+      }
+    }
+  }
+
+  return posts.sort((a, b) => new Date(b.cdate) - new Date(a.cdate));
+};

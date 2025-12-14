@@ -1,13 +1,31 @@
 {
   "name": "blasphemous",
   "version": "1.0.0",
-  "description": "",
+  "description": "Clear And Fast Blog Builder",
   "main": "src/commands/blasphemous.js",
+  "bin": {
+    "blasphemous": "./src/commands/blasphemous.js"
+  },
   "scripts": {
+    "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",
+
+    "build": "node src/commands/blasphemous.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "keywords": ["blog", "static-site", "generator"],
+  "author": "catpea (https://github.com/catpea)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catpea/blasphemous.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/blasphemous/issues"
+  },
+  "homepage": "https://catpea.github.io/blasphemous",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/catpea"
+  },
+  "type": "module"
 }
