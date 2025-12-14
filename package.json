@@ -1,6 +1,6 @@
 {
   "name": "blasphemous",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Clear And Fast Blog Builder",
   "main": "src/commands/blasphemous.js",
   "bin": {
@@ -8,11 +8,14 @@
   },
   "scripts": {
     "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",
-
     "build": "node src/commands/blasphemous.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["blog", "static-site", "generator"],
+  "keywords": [
+    "blog",
+    "static-site",
+    "generator"
+  ],
   "author": "catpea (https://github.com/catpea)",
   "license": "MIT",
   "repository": {
