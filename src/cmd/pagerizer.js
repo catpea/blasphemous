@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { writeFile, mkdir } from 'fs/promises';
-import { discoverPosts, interpol, chunk } from './lib.js';
+import { discoverPosts, interpol, chunk } from '../lib/util.js';
 
 export default async function pagerizer({ src, dest, perpage = 12, filename = 'page-${nnn}.html', ...options }) {
   const dbPath = join(src, 'db');
@@ -12,12 +12,9 @@ export default async function pagerizer({ src, dest, perpage = 12, filename = 'p
   const publishedPosts = posts.filter(p => !p.draft);
   const pages = chunk(publishedPosts, perpage);
 
-  // Clean filename (remove comments like "<-- CLAUSE ...")
-  const cleanFilename = filename.split('<--')[0].trim();
-
   for (let i = 0; i < pages.length; i++) {
     const pageNum = String(i + 1).padStart(3, '0');
-    const pageName = interpol(cleanFilename, { nnn: pageNum, n: i + 1 });
+    const pageName = interpol(filename, { nnn: pageNum, n: i + 1 });
     const html = generatePageHtml(pages[i], i + 1, pages.length);
 
     await writeFile(join(wwwroot, pageName), html);

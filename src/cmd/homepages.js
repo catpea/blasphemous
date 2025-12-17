@@ -1,7 +1,7 @@
 import { join, basename } from 'path';
 import { writeFile, mkdir, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
-import { discoverPosts } from './lib.js';
+import { discoverPosts } from '../lib/util.js';
 
 export default async function homepages({ src, dest, recentCount = 12, featureTags = ['app', 'music', 'fancy'], ...options }) {
   const dbPath = join(src, 'db');
