@@ -1,6 +1,6 @@
 {
   "name": "blasphemous",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Clear And Fast Blog Builder",
   "main": "src/blasphemous.js",
   "bin": {
