@@ -1,14 +1,19 @@
 import { DatabaseSync } from 'node:sqlite';
-import { promises as fs } from 'node:fs';
+import { existsSync, mkdirSync, promises as fs } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Initialize database
 let db;
+
 function getDb() {
   if (!db) {
-    const dbPath = join(process.cwd(), '.temp', '.wise.sqlite');
+
+    const baseDir = join(process.cwd(), '.temp');
+    if (!existsSync(baseDir)) mkdirSync(baseDir);
+    const dbPath = join(baseDir, '.wise.sqlite');
+
     db = new DatabaseSync(dbPath);
 
     // Create manifest table
